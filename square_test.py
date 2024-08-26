@@ -27,9 +27,14 @@ def square_number(ack, command):
     
     slack_app.client.chat_postMessage(channel=command['channel_id'], text=response)
 
-# Flask route for Slack events
+# Flask route for Slack events and challenge
 @flask_app.route("/slack/events", methods=["POST"])
 def slack_events():
+    # Check if it's a challenge request
+    if request.json and "challenge" in request.json:
+        return jsonify({"challenge": request.json["challenge"]})
+    
+    # If it's not a challenge, pass to the regular event handler
     return handler.handle(request)
 
 # Home route
@@ -37,16 +42,5 @@ def slack_events():
 def home():
     return "Your Slack Bot Server is running!"
 
-# Slack challenge handler
-@flask_app.route("/slack/events", methods=["POST"])
-def slack_challenge():
-    # Check if it's a challenge request
-    if "challenge" in request.json:
-        return jsonify({"challenge": request.json["challenge"]})
-    
-    # If it's not a challenge, pass to the regular event handler
-    return handler.handle(request)
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    flask_app.run(host="0.0.0.0", port=port)
+# We don't need the if __name__ == "__main__" block anymore
+# Gunicorn will handle running the app

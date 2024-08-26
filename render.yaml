@@ -3,7 +3,7 @@ services:
     name: slack-bot
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: python square_test.py
+    startCommand: gunicorn square_test:flask_app
     envVars:
       - key: SLACK_BOT_TOKEN
         sync: false
