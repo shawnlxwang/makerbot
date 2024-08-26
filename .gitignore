@@ -1,0 +1,5 @@
+.env
+*.log
+.DS_Store
+makerbot_venv/
+google_api_creds.json
