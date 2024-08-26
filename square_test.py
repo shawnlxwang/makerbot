@@ -47,5 +47,6 @@ def slack_challenge():
     # If it's not a challenge, pass to the regular event handler
     return handler.handle(request)
 
-# We don't need the if __name__ == "__main__" block anymore
-# Gunicorn will handle running the app
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    flask_app.run(host="0.0.0.0", port=port)
