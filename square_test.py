@@ -8,14 +8,14 @@ from slack_bolt.adapter.flask import SlackRequestHandler
 load_dotenv()
 
 # Initialize the Slack app
-app = App(token=os.environ["SLACK_BOT_TOKEN"])
+slack_app = App(token=os.environ["SLACK_BOT_TOKEN"])
 
 # Initialize Flask app
 flask_app = Flask(__name__)
-handler = SlackRequestHandler(app)
+handler = SlackRequestHandler(slack_app)
 
 # Command handler
-@app.command("/square")
+@slack_app.command("/square")
 def square_number(ack, command):
     ack()
     try:
@@ -25,7 +25,7 @@ def square_number(ack, command):
     except ValueError:
         response = "Please provide a valid number."
     
-    app.client.chat_postMessage(channel=command['channel_id'], text=response)
+    slack_app.client.chat_postMessage(channel=command['channel_id'], text=response)
 
 # Flask route for Slack events
 @flask_app.route("/slack/events", methods=["POST"])
@@ -47,6 +47,5 @@ def slack_challenge():
     # If it's not a challenge, pass to the regular event handler
     return handler.handle(request)
 
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    flask_app.run(host="0.0.0.0", port=port)
+# We don't need the if __name__ == "__main__" block anymore
+# Gunicorn will handle running the app
