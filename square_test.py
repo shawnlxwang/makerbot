@@ -37,6 +37,16 @@ def slack_events():
 def home():
     return "Your Slack Bot Server is running!"
 
+# Slack challenge handler
+@flask_app.route("/slack/events", methods=["POST"])
+def slack_challenge():
+    # Check if it's a challenge request
+    if "challenge" in request.json:
+        return jsonify({"challenge": request.json["challenge"]})
+    
+    # If it's not a challenge, pass to the regular event handler
+    return handler.handle(request)
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     flask_app.run(host="0.0.0.0", port=port)
